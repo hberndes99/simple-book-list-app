@@ -38,10 +38,53 @@ class UI {
     static clearFields() {
         document.querySelector('#book-form').reset();
     }
+
+    static deleteBook(target) {
+        if (target.classList.contains("delete")) {
+            target.parentElement.parentElement.remove()
+        }
+    }
+
+    static showValidationAlert(message, className) {
+        const div = document.createElement('div');
+        div.className = (`alert alert-${className}`);
+        div.appendChild(document.createTextNode(message));
+        const container = document.querySelector('.container');
+        const form = document.querySelector("#book-form");
+        container.insertBefore(div, form);
+
+        // get alert to disappear
+        setTimeout( () => document.querySelector(".alert").remove(),3000)
+    }
 }
 
 // store class to take care of storage 
+class Store {
+    constructor() {
 
+    }
+
+    static getBooks() {
+        let books;
+        if (localStorage.getItem('books') === null)  {
+            books = [];
+        }
+        else {
+            books = JSON.parse(localStorage.getItem('books'));
+        }
+        return books;
+    }
+
+    static addBooks(book) {
+        const books = Store.getBooks;
+        books.push(book);
+        localStorage.setItem('books', JSON.stringify(books));
+    }
+
+    static removeBook() {
+
+    }
+}
 
 // event display books
 document.addEventListener('DOMContentLoaded', UI.displayBooks);
@@ -58,7 +101,13 @@ bookForm.addEventListener('submit', (e) => {
     const author = document.querySelector("#author").value;
     const isbn = document.querySelector("#isbn").value;
 
-    // make book instance
+    //validation
+    if (title ===""|| author ===""|| isbn ==="") {
+        UI.showValidationAlert(`please fill in all sections`, 'danger');
+    }
+    else {
+    
+        // make book instance
     const newBook = new Book(title,author,isbn);
 
     //add book to UI
@@ -67,7 +116,17 @@ bookForm.addEventListener('submit', (e) => {
     //clear fields method
     UI.clearFields();
 
+    //successful book added message
+    UI.showValidationAlert(`book successfully added`, 'success');
+    }
+
+ 
+
 });
 
 
 // event remove book 
+document.querySelector("#book-list").addEventListener("click", e => {
+    UI.deleteBook(e.target);
+    UI.showValidationAlert(`book removed from list`, 'success');
+})
