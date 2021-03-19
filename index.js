@@ -11,12 +11,8 @@ class Book {
 // class UI to handle UI tasks (user interface)
 class UI {
     static displayBooks() {
-        const StoredBooks = [
-            { title: 'book one', author: 'john', isbn: '4646'}, 
-            {title: 'book two', author: 'tiff', isbn: '75982758923'}
-        ];
 
-        const books = StoredBooks;
+        const books = Store.getBooks();
 
         books.forEach(book => UI.addBookToList(book));
     };
@@ -41,7 +37,7 @@ class UI {
 
     static deleteBook(target) {
         if (target.classList.contains("delete")) {
-            target.parentElement.parentElement.remove()
+            target.parentElement.parentElement.remove();
         }
     }
 
@@ -76,13 +72,19 @@ class Store {
     }
 
     static addBooks(book) {
-        const books = Store.getBooks;
+        const books = Store.getBooks();
         books.push(book);
         localStorage.setItem('books', JSON.stringify(books));
     }
 
-    static removeBook() {
-
+    static removeBook(isbn) {
+        const books = Store.getBooks();
+        books.forEach( (book, index) => {
+            if(book.isbn === isbn) {
+                books.splice(index,1);
+            }
+        })
+        localStorage.setItem('books', JSON.stringify(books))
     }
 }
 
@@ -113,6 +115,10 @@ bookForm.addEventListener('submit', (e) => {
     //add book to UI
     UI.addBookToList(newBook);
 
+    //add book to storage
+    // i.e so it doesn't disappear if page is reloaded
+    Store.addBooks(newBook);
+
     //clear fields method
     UI.clearFields();
 
@@ -129,4 +135,9 @@ bookForm.addEventListener('submit', (e) => {
 document.querySelector("#book-list").addEventListener("click", e => {
     UI.deleteBook(e.target);
     UI.showValidationAlert(`book removed from list`, 'success');
+
+    // remove a book from local
+    // i.e so it doesn't re appear if page is reloaded
+    Store.removeBook(e.target.parentElement.previousElementSibling.textContent);
+
 })
