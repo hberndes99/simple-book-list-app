@@ -4,7 +4,7 @@ class Book {
     constructor(title, author, isbn) {
         this.title = title;
         this.author = author;
-        this.isbn = isbn
+        this.isbn = isbn;
     }
 }
 
@@ -83,8 +83,8 @@ class Store {
             if(book.isbn === isbn) {
                 books.splice(index,1);
             }
-        })
-        localStorage.setItem('books', JSON.stringify(books))
+        });
+        localStorage.setItem('books', JSON.stringify(books));
     }
 }
 
@@ -97,7 +97,6 @@ bookForm.addEventListener('submit', (e) => {
     //prevent default reload
     e.preventDefault();
 
-
     //get form values
     const title = document.querySelector("#title").value;
     const author = document.querySelector("#author").value;
@@ -108,26 +107,22 @@ bookForm.addEventListener('submit', (e) => {
         UI.showValidationAlert(`please fill in all sections`, 'danger');
     }
     else {
-    
         // make book instance
-    const newBook = new Book(title,author,isbn);
+        const newBook = new Book(title,author,isbn);
 
-    //add book to UI
-    UI.addBookToList(newBook);
+        //add book to UI
+        UI.addBookToList(newBook);
 
-    //add book to storage
-    // i.e so it doesn't disappear if page is reloaded
-    Store.addBooks(newBook);
+        //add book to storage
+        // i.e so it doesn't disappear if page is reloaded
+        Store.addBooks(newBook);
 
-    //clear fields method
-    UI.clearFields();
+        //clear fields method
+        UI.clearFields();
 
-    //successful book added message
-    UI.showValidationAlert(`book successfully added`, 'success');
+        //successful book added message
+        UI.showValidationAlert(`book successfully added`, 'success');
     }
-
- 
-
 });
 
 
@@ -139,5 +134,4 @@ document.querySelector("#book-list").addEventListener("click", e => {
     // remove a book from local
     // i.e so it doesn't re appear if page is reloaded
     Store.removeBook(e.target.parentElement.previousElementSibling.textContent);
-
 })
